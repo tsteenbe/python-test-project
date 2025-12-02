@@ -1,0 +1,60 @@
+name: ORT-scan-test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  ort:
+    runs-on: ubuntu-latest-node22
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v5
+      # - name: Install Mercurial
+      #   run: |
+      #     apt-get update
+      #     apt-get install -y mercurial
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install setuptools via pip
+        shell: bash
+        run: |
+          pip install setuptools
+      - name: Install python-inspector via pip
+        shell: bash
+        run: |
+          pip install python-inspector
+      - name: Run Forgejo Action for ORT
+        id: ort
+        uses: tsteenbe/ort-ci-forgejo-action@5477e7ffbcfdcf71da5a0ee50d2b4fc31382046
+        with:
+          ort-config-repository: https://codefloe.com/tsteenbe/ort-config.git
+          mode: 'da'
+      - name: Debugging
+        id: ort-debug
+        shell: bash
+        run: |
+          echo "ort-cli-advise-args: ${{ steps.ort.outputs.ort-cli-evaluate-args }}"
+          echo "ort-cli-analyze-args: ${{ steps.ort.outputs.ort-cli-analyze-args }}"
+          echo "ort-cli-evaluate-args: ${{ steps.ort.outputs.ort-cli-evaluate-args }}"
+          echo "ort-cli-report-args: ${{ steps.ort.outputs.ort-cli-report-args }}"
+          echo "ort-cli-scan-args: ${{ steps.ort.outputs.ort-cli-scan-args }}"
+          echo "ort-config-path: ${{ steps.ort.outputs.ort-config-path }}"
+          echo "ort-log-level: ${{ steps.ort.outputs.ort-log-level }}"
+          echo "ort-version: ${{ steps.ort.outputs.ort-version }}"
+          echo "results-advisor-path: ${{ steps.ort.outputs.results-advisor-path }}"
+          echo "results-analyzer-path: ${{ steps.ort.outputs.results-analyzer-path }}"
+          echo "results-evaluator-path: ${{ steps.ort.outputs.results-evaluator-path }}"
+          echo "results-html-report-path: ${{ steps.ort.outputs.results-html-report-path }}"
+          echo "results-path: ${{ steps.ort.outputs.results-path }}"
+          echo "results-sbom-cyclonedx-json-path: ${{ steps.ort.outputs.results-sbom-cyclonedx-json-path }}"
+          echo "results-sbom-cyclonedx-xml-path: ${{ steps.ort.outputs.results-sbom-cyclonedx-xml-path }}"
+          echo "results-sbom-spdx-json-path: ${{ steps.ort.outputs.results-sbom-spdx-json-path }}"
+          echo "results-sbom-spdx-yml-path: ${{ steps.ort.outputs.results-sbom-spdx-yml-path }}"
+          echo "results-scanner-path: ${{ steps.ort.outputs.results-scanner-path }}"
+          echo "results-web-app-path: ${{ steps.ort.outputs.results-web-app-path }}"
+          echo "sw-name: ${{ steps.ort.outputs.sw-name }}"
+          echo "sw-name-safe: ${{ steps.ort.outputs.sw-name-safe }}"
+          echo "sw-version: ${{ steps.ort.outputs.sw-version }}"
+          printenv
